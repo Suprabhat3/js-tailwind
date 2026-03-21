@@ -1,144 +1,247 @@
-(() => {
-	const ALIGN_VALUES = new Set(["left", "right", "center", "justify"]);
+const TEXT_ALIGNMENT_VALUES = ["left", "right", "center", "justify"];
 
-	function isNumeric(value) {
-		return /^-?\d+(\.\d+)?$/.test(value);
-	}
+const SPACING_PROPERTY_MAP = {
+  p: ["padding"],
+  pt: ["padding-top"],
+  pr: ["padding-right"],
+  pb: ["padding-bottom"],
+  pl: ["padding-left"],
+  px: ["padding-left", "padding-right"],
+  py: ["padding-top", "padding-bottom"],
+  m: ["margin"],
+  mt: ["margin-top"],
+  mr: ["margin-right"],
+  mb: ["margin-bottom"],
+  ml: ["margin-left"],
+  mx: ["margin-left", "margin-right"],
+  my: ["margin-top", "margin-bottom"],
+};
 
-	function toPx(value) {
-		return `${value}px`;
-	}
+function isNumericValue(value) {
+  const numberPattern = /^-?\d+(\.\d+)?$/;
+  return numberPattern.test(value);
+}
 
-	function applyStyles(element, styles) {
-		for (const [property, value] of Object.entries(styles)) {
-			element.style.setProperty(property, value);
-		}
-	}
+function addPxUnit(value) {
+  return value + "px";
+}
 
-	function spacingStyles(type, value) {
-		const map = {
-			p: ["padding"],
-			pt: ["padding-top"],
-			pr: ["padding-right"],
-			pb: ["padding-bottom"],
-			pl: ["padding-left"],
-			px: ["padding-left", "padding-right"],
-			py: ["padding-top", "padding-bottom"],
-			m: ["margin"],
-			mt: ["margin-top"],
-			mr: ["margin-right"],
-			mb: ["margin-bottom"],
-			ml: ["margin-left"],
-			mx: ["margin-left", "margin-right"],
-			my: ["margin-top", "margin-bottom"],
-		};
+function classStartsWithChaiPrefix(className) {
+  return className.startsWith("chai-");
+}
 
-		const props = map[type];
-		if (!props || !isNumeric(value)) {
-			return null;
-		}
+function applyStyleObjectToElement(element, styleObject) {
+  const styleEntries = Object.entries(styleObject);
 
-		const size = toPx(value);
-		const result = {};
-		for (const prop of props) {
-			result[prop] = size;
-		}
-		return result;
-	}
+  for (let index = 0; index < styleEntries.length; index += 1) {
+    const entry = styleEntries[index];
+    const propertyName = entry[0];
+    const propertyValue = entry[1];
 
-	function textStyles(value) {
-		if (ALIGN_VALUES.has(value)) {
-			return { "text-align": value };
-		}
-		if (isNumeric(value)) {
-			return { "font-size": toPx(value) };
-		}
-		return { color: value };
-	}
+    element.style.setProperty(propertyName, propertyValue);
+  }
+}
 
-	function borderStyles(value) {
-		if (isNumeric(value)) {
-			return {
-				"border-width": toPx(value),
-				"border-style": "solid",
-			};
-		}
-		return { "border-color": value };
-	}
+function parseSpacingUtility(utilityKey, utilityValue) {
+  const propertiesToUpdate = SPACING_PROPERTY_MAP[utilityKey];
 
-	function parseUtilityClass(className) {
-		if (!className.startsWith("chai-")) {
-			return null;
-		}
+  if (!propertiesToUpdate) {
+    return null;
+  }
 
-		const parts = className.split("-");
-		if (parts.length < 3 || parts[0] !== "chai") {
-			return null;
-		}
+  if (!isNumericValue(utilityValue)) {
+    return null;
+  }
 
-		const key = parts[1];
-		const value = parts.slice(2).join("-");
+  const cssValue = addPxUnit(utilityValue);
+  const styleObject = {};
 
-		if (!value) {
-			return null;
-		}
+  for (let index = 0; index < propertiesToUpdate.length; index += 1) {
+    const propertyName = propertiesToUpdate[index];
+    styleObject[propertyName] = cssValue;
+  }
 
-		const spacing = spacingStyles(key, value);
-		if (spacing) {
-			return spacing;
-		}
+  return styleObject;
+}
 
-		if (key === "bg") {
-			return { "background-color": value };
-		}
+function parseTextUtility(utilityValue) {
+  const isTextAlignmentValue = TEXT_ALIGNMENT_VALUES.includes(utilityValue);
+  if (isTextAlignmentValue) {
+    return { "text-align": utilityValue };
+  }
 
-		if (key === "text") {
-			return textStyles(value);
-		}
+  if (isNumericValue(utilityValue)) {
+    return { "font-size": addPxUnit(utilityValue) };
+  }
 
-		if (key === "border") {
-			return borderStyles(value);
-		}
+  return { color: utilityValue };
+}
 
-		if (key === "rounded" && isNumeric(value)) {
-			return { "border-radius": toPx(value) };
-		}
+function parseBorderUtility(utilityValue) {
+  if (isNumericValue(utilityValue)) {
+    return {
+      "border-width": addPxUnit(utilityValue),
+      "border-style": "solid",
+    };
+  }
 
-		if (key === "w" && isNumeric(value)) {
-			return { width: toPx(value) };
-		}
+  return { "border-color": utilityValue };
+}
 
-		if (key === "h" && isNumeric(value)) {
-			return { height: toPx(value) };
-		}
+function parseFixedUtilityClass(className) {
+  if (className === "chai-flex") {
+    return { display: "flex" };
+  }
 
-		return null;
-	}
+  if (className === "chai-block") {
+    return { display: "block" };
+  }
 
-	function applyChaiUtilities(options = {}) {
-		const { removeClasses = false } = options;
-		const elements = document.querySelectorAll("[class]");
+  if (className === "chai-inline-block") {
+    return { display: "inline-block" };
+  }
 
-		elements.forEach((element) => {
-			const classes = Array.from(element.classList);
+  if (className === "chai-wrap") {
+    return { "flex-wrap": "wrap" };
+  }
 
-			classes.forEach((className) => {
-				const styles = parseUtilityClass(className);
-				if (!styles) {
-					return;
-				}
+  return null;
+}
 
-				applyStyles(element, styles);
-				if (removeClasses) {
-					element.classList.remove(className);
-				}
-			});
-		});
-	}
+function splitUtilityClass(className) {
+  const parts = className.split("-");
 
-	document.addEventListener("DOMContentLoaded", () => {
-		applyChaiUtilities({ removeClasses: false });
-	});
+  if (parts.length < 3) {
+    return null;
+  }
 
-	window.applyChaiUtilities = applyChaiUtilities;
-})();
+  if (parts[0] !== "chai") {
+    return null;
+  }
+
+  const utilityKey = parts[1];
+  const utilityValue = parts.slice(2).join("-");
+
+  if (!utilityValue) {
+    return null;
+  }
+
+  return {
+    key: utilityKey,
+    value: utilityValue,
+  };
+}
+
+function parseUtilityClass(className) {
+  if (!classStartsWithChaiPrefix(className)) {
+    return null;
+  }
+
+  const fixedUtilityStyle = parseFixedUtilityClass(className);
+  if (fixedUtilityStyle) {
+    return fixedUtilityStyle;
+  }
+
+  const parsedUtility = splitUtilityClass(className);
+  if (!parsedUtility) {
+    return null;
+  }
+
+  const utilityKey = parsedUtility.key;
+  const utilityValue = parsedUtility.value;
+
+  const spacingStyle = parseSpacingUtility(utilityKey, utilityValue);
+  if (spacingStyle) {
+    return spacingStyle;
+  }
+
+  if (utilityKey === "bg") {
+    return { "background-color": utilityValue };
+  }
+
+  if (utilityKey === "text") {
+    return parseTextUtility(utilityValue);
+  }
+
+  if (utilityKey === "border") {
+    return parseBorderUtility(utilityValue);
+  }
+
+  if (utilityKey === "rounded" && isNumericValue(utilityValue)) {
+    return { "border-radius": addPxUnit(utilityValue) };
+  }
+
+  if (utilityKey === "w" && isNumericValue(utilityValue)) {
+    return { width: addPxUnit(utilityValue) };
+  }
+
+  if (utilityKey === "h" && isNumericValue(utilityValue)) {
+    return { height: addPxUnit(utilityValue) };
+  }
+
+  if (utilityKey === "maxw" && isNumericValue(utilityValue)) {
+    return { "max-width": addPxUnit(utilityValue) };
+  }
+
+  if (utilityKey === "gap" && isNumericValue(utilityValue)) {
+    return { gap: addPxUnit(utilityValue) };
+  }
+
+  if (utilityKey === "font" && utilityValue === "bold") {
+    return { "font-weight": "700" };
+  }
+
+  return null;
+}
+
+function applyUtilitiesToElement(element, classNames, options = {}) {
+  const removeClassesOption = options.removeClasses === true;
+  const unsupportedClasses = [];
+
+  for (let index = 0; index < classNames.length; index += 1) {
+    const className = classNames[index];
+
+    if (!classStartsWithChaiPrefix(className)) {
+      continue;
+    }
+
+    const parsedStyleObject = parseUtilityClass(className);
+    if (!parsedStyleObject) {
+      unsupportedClasses.push(className);
+      continue;
+    }
+
+    applyStyleObjectToElement(element, parsedStyleObject);
+
+    if (removeClassesOption) {
+      element.classList.remove(className);
+    }
+  }
+
+  return unsupportedClasses;
+}
+
+function applyChaiUtilities(options = {}) {
+  const removeClassesOption = options.removeClasses === true;
+  const elementsWithClass = document.querySelectorAll("[class]");
+
+  for (let index = 0; index < elementsWithClass.length; index += 1) {
+    const currentElement = elementsWithClass[index];
+    const classNames = Array.from(currentElement.classList);
+
+    applyUtilitiesToElement(currentElement, classNames, {
+      removeClasses: removeClassesOption,
+    });
+  }
+}
+
+function onDocumentReady() {
+  applyChaiUtilities({ removeClasses: false });
+}
+
+document.addEventListener("DOMContentLoaded", onDocumentReady);
+
+window.applyChaiUtilities = applyChaiUtilities;
+window.applyUtilitiesToElement = applyUtilitiesToElement;
+window.parseUtilityClass = parseUtilityClass;
+
