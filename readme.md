@@ -83,10 +83,58 @@ N must be numeric, and is converted to px.
 - chai-maxw-N -> max-width: Npx
 - chai-gap-N -> gap: Npx
 - chai-flex -> display: flex
+- chai-grid -> display: grid
 - chai-block -> display: block
 - chai-inline-block -> display: inline-block
 - chai-wrap -> flex-wrap: wrap
+- chai-nowrap -> flex-wrap: nowrap
 - chai-font-bold -> font-weight: 700
+- chai-decoration-none -> text-decoration: none
+
+### Flex Utilities
+
+Use these classes to build row/column layouts and alignment.
+
+- chai-flex -> display: flex
+- chai-flex-row -> flex-direction: row
+- chai-flex-col -> flex-direction: column
+- chai-wrap -> flex-wrap: wrap
+- chai-nowrap -> flex-wrap: nowrap
+- chai-gap-N -> gap: Npx
+
+Justify content options:
+
+- chai-justify-start
+- chai-justify-end
+- chai-justify-center
+- chai-justify-between
+- chai-justify-around
+- chai-justify-evenly
+
+Align items options:
+
+- chai-items-start
+- chai-items-end
+- chai-items-center
+- chai-items-stretch
+
+Example:
+
+- chai-flex chai-flex-row chai-justify-between chai-items-center chai-gap-12
+
+### Grid Utilities
+
+Use these classes to build multi-column layouts quickly.
+
+- chai-grid -> display: grid
+- chai-cols-N -> grid-template-columns: repeat(N, minmax(0, 1fr))
+- chai-rows-N -> grid-template-rows: repeat(N, minmax(0, 1fr))
+- chai-gap-N -> gap: Npx
+
+Examples:
+
+- chai-grid chai-cols-3 chai-gap-12
+- chai-grid chai-cols-2 chai-rows-2 chai-gap-8
 
 ## Playground Flow
 
@@ -107,13 +155,6 @@ The core engine exposes these functions globally:
 
 These are useful for demos, testing, and teaching.
 
-## Design Decisions
-
-- Beginner-first implementation with clear function names
-- No IIFE wrapper, so top-level functions are easier to discuss in class
-- No media queries or responsive optimization (intentional for teaching focus)
-- Numeric utility values default to px for simplicity
-
 ## Known Limitations
 
 - Limited set of utility keys
@@ -126,10 +167,4 @@ These are useful for demos, testing, and teaching.
 1. Open index.html in a browser.
 2. Use the playground controls.
 3. Inspect elements in DevTools to see generated inline styles.
-
-## Suggested Next Steps
-
-- Add more utility groups such as justify-content and align-items
-- Add custom unit support like rem and percent
-- Add validation helper text instead of only popup alerts
-- Add automated tests for parser functions
+4. Modify style.js to add new utilities or change behavior.

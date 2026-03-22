@@ -6,9 +6,19 @@
 		<title>Chai Utility Playground</title>
 	</head>
 	<body class="chai-p-28 chai-bg-whitesmoke">
-		<main class="chai-p-24 chai-border-1 chai-border-lightgray chai-rounded-18 chai-bg-white chai-maxw-980">
-			<h1 class="chai-text-34 chai-m-0 chai-mb-8">Chai Utility Playground</h1>
+		<main class="chai-p-24 chai-border-1 chai-border-lightgray chai-rounded-18 chai-bg-white chai-maxw-980 chai-mx-auto">
+			<header class="chai-bg-aliceblue chai-border-1 chai-border-lightgray chai-rounded-12 chai-p-16 chai-mb-18">
+				<h1 class="chai-text-34 chai-m-0 chai-mb-8">Chai Utility Playground</h1>
+				<p class="chai-m-0 chai-mb-8 chai-text-slategray">Build styles by writing only chai classes. No CSS file required for this demo.</p>
+				<div class="chai-flex chai-wrap chai-gap-8">
+					<span class="chai-p-8 chai-rounded-999 chai-bg-white chai-border-1 chai-border-lightgray chai-text-13">Utility-first</span>
+					<span class="chai-p-8 chai-rounded-999 chai-bg-white chai-border-1 chai-border-lightgray chai-text-13">DOM parser</span>
+					<span class="chai-p-8 chai-rounded-999 chai-bg-white chai-border-1 chai-border-lightgray chai-text-13">Beginner friendly</span>
+				</div>
+			</header>
+
 			<p class="chai-m-0 chai-mb-14 chai-text-slategray">Click preset classes, edit manually, then press Run to apply styles using DOM conversion.</p>
+			<p class="chai-m-0 chai-mb-14 chai-text-slategray">New: flex and grid chips are included below.</p>
 
 			<div class="chip-list chai-flex chai-wrap chai-gap-8 chai-mb-18">
 				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-p-20">chai-p-20</button>
@@ -22,13 +32,21 @@
 				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-rounded-12">chai-rounded-12</button>
 				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-w-320">chai-w-320</button>
 				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-h-140">chai-h-140</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-flex">chai-flex</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-flex-row">chai-flex-row</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-flex-col">chai-flex-col</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-justify-center">chai-justify-center</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-items-center">chai-items-center</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-grid">chai-grid</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-cols-3">chai-cols-3</button>
+				<button class="chip chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-999 chai-text-13" data-class="chai-gap-12">chai-gap-12</button>
 			</div>
 
 			<input
-				class="chai-p-12 chai-text-14 chai-rounded-10 chai-border-1 chai-border-lightgray chai-w-500"
+				class="chai-p-12 chai-text-14 chai-rounded-10 chai-border-1 chai-border-lightgray chai-w-900"
 				type="text"
 				id="classInput"
-				placeholder="Example: chai-p-10 chai-bg-teal chai-text-white chai-rounded-10"
+				placeholder="Example: chai-grid chai-cols-3 chai-gap-12 chai-bg-teal"
 			/>
 
 			<div class="controls chai-flex chai-gap-10 chai-mt-12">
@@ -37,8 +55,21 @@
 			</div>
 
 			<p class="chai-mt-22 chai-mb-8 chai-font-bold">Preview</p>
-			<div id="previewBox" class="preview-box chai-inline-block chai-w-320 chai-h-140 chai-p-14 chai-border-1 chai-border-lightsteelblue chai-rounded-10 chai-bg-aliceblue">Your converted styles appear here.</div>
+			<div id="previewBox" class="preview-box chai-inline-block chai-w-320 chai-h-140 chai-p-14 chai-border-1 chai-border-lightsteelblue chai-rounded-10 chai-bg-aliceblue">
+				<div class="chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-8 chai-p-8">Item 1</div>
+				<div class="chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-8 chai-p-8">Item 2</div>
+				<div class="chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-8 chai-p-8">Item 3</div>
+			</div>
 			<p id="output" class="output chai-mt-12 chai-text-14 chai-text-slategray">Tip: try adding chai-bg-coral and chai-text-white.</p>
+
+			<footer class="chai-pt-24 chai-border-1 chai-border-lightgray chai-rounded-10 chai-p-12 chai-bg-whitesmoke">
+				<p class="chai-m-0 chai-mb-8 chai-font-bold">What to Contact 👇</p>
+				<div class="chai-flex chai-gap-10 chai-wrap">
+					<a class="chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-8 chai-text-black chai-decoration-none" href="https://github.com/suprabhat3" target="_blank" rel="noreferrer">GitHub</a>
+					<a class="chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-8 chai-text-black chai-decoration-none" href="https://www.linkedin.com/in/suprabhatt" target="_blank" rel="noreferrer">LinkedIn</a>
+					<a class="chai-p-8 chai-bg-white chai-border-1 chai-border-lightgray chai-rounded-8 chai-text-black chai-decoration-none" href="https://x.com/suprabhat_3" target="_blank" rel="noreferrer">X</a>
+				</div>
+			</footer>
 		</main>
 
 		<script src="./style.js"></script>

@@ -1,4 +1,5 @@
 const TEXT_ALIGNMENT_VALUES = ["left", "right", "center", "justify"];
+const FLEX_ALIGNMENT_VALUES = ["start", "end", "center", "between", "around", "evenly"];
 
 const SPACING_PROPERTY_MAP = {
   p: ["padding"],
@@ -49,6 +50,18 @@ function parseSpacingUtility(utilityKey, utilityValue) {
     return null;
   }
 
+  const isMarginUtility = utilityKey.startsWith("m");
+  if (isMarginUtility && utilityValue === "auto") {
+    const styleObject = {};
+
+    for (let index = 0; index < propertiesToUpdate.length; index += 1) {
+      const propertyName = propertiesToUpdate[index];
+      styleObject[propertyName] = "auto";
+    }
+
+    return styleObject;
+  }
+
   if (!isNumericValue(utilityValue)) {
     return null;
   }
@@ -93,6 +106,10 @@ function parseFixedUtilityClass(className) {
     return { display: "flex" };
   }
 
+  if (className === "chai-grid") {
+    return { display: "grid" };
+  }
+
   if (className === "chai-block") {
     return { display: "block" };
   }
@@ -105,7 +122,35 @@ function parseFixedUtilityClass(className) {
     return { "flex-wrap": "wrap" };
   }
 
+  if (className === "chai-nowrap") {
+    return { "flex-wrap": "nowrap" };
+  }
+
   return null;
+}
+
+function convertFlexAlignmentValue(utilityValue) {
+  if (utilityValue === "start") {
+    return "flex-start";
+  }
+
+  if (utilityValue === "end") {
+    return "flex-end";
+  }
+
+  if (utilityValue === "between") {
+    return "space-between";
+  }
+
+  if (utilityValue === "around") {
+    return "space-around";
+  }
+
+  if (utilityValue === "evenly") {
+    return "space-evenly";
+  }
+
+  return utilityValue;
 }
 
 function splitUtilityClass(className) {
@@ -189,6 +234,40 @@ function parseUtilityClass(className) {
 
   if (utilityKey === "font" && utilityValue === "bold") {
     return { "font-weight": "700" };
+  }
+
+  if (utilityKey === "decoration" && utilityValue === "none") {
+    return { "text-decoration": "none" };
+  }
+
+  if (utilityKey === "flex" && (utilityValue === "row" || utilityValue === "col")) {
+    if (utilityValue === "row") {
+      return { "flex-direction": "row" };
+    }
+
+    return { "flex-direction": "column" };
+  }
+
+  if (utilityKey === "justify" && FLEX_ALIGNMENT_VALUES.includes(utilityValue)) {
+    const cssValue = convertFlexAlignmentValue(utilityValue);
+    return { "justify-content": cssValue };
+  }
+
+  if (utilityKey === "items" && (utilityValue === "start" || utilityValue === "end" || utilityValue === "center" || utilityValue === "stretch")) {
+    const cssValue = convertFlexAlignmentValue(utilityValue);
+    return { "align-items": cssValue };
+  }
+
+  if (utilityKey === "cols" && isNumericValue(utilityValue)) {
+    return {
+      "grid-template-columns": "repeat(" + utilityValue + ", minmax(0, 1fr))",
+    };
+  }
+
+  if (utilityKey === "rows" && isNumericValue(utilityValue)) {
+    return {
+      "grid-template-rows": "repeat(" + utilityValue + ", minmax(0, 1fr))",
+    };
   }
 
   return null;
